@@ -1,6 +1,7 @@
 .PHONY: setup test pre-commit
 
 setup:
+	chmod 777 -R .
 	docker compose up -d --build
 	docker compose exec app composer install --no-scripts
 	@if [ ! -f .env ]; then \
