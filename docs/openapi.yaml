@@ -1,0 +1,187 @@
+openapi: 3.0.4
+info:
+  title: Тестовое задание
+  contact:
+    email: cupzy@ya.ru
+  version: 0.0.1
+servers:
+  - url: http://localhost/
+tags:
+  - name: organization
+  - name: building
+security:
+  - ApiTokenAuth: []
+paths:
+  /api/organizations:
+    get:
+      tags:
+        - organization
+      description: Получить список организаций
+      operationId: organizationIndex
+      parameters:
+        - name: filter[name]
+          in: query
+          description: Поиск по частичному совпадению названия
+          required: false
+          schema:
+            type: string
+        - name: filter[building_id]
+          in: query
+          description: Поиск организаций по ид здания в котором они находятся
+          required: false
+          explode: true
+          schema:
+            type: integer
+        - name: filter[operation_id]
+          in: query
+          description: Поиск организаций по точному совпаднию вида деятельности
+          required: false
+          explode: true
+          schema:
+            type: integer
+        - name: filter[parent_operation_id]
+          in: query
+          description: Поиск организаций по совпаднию вида деятельности включая дочерние к переданному виду
+          required: false
+          explode: true
+          schema:
+            type: integer
+        - name: filter[geo][lat]
+          in: query
+          description: Широта для геопоиска по организациям
+          required: false
+          schema:
+            type: number
+        - name: filter[geo][lon]
+          in: query
+          description: Долгота для геопоиска по организациям
+          required: false
+          schema:
+            type: number
+        - name: filter[geo][radius]
+          in: query
+          description: Радиус в км геопоиска по организациям
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Organization'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+  /api/organizations/{id}:
+    get:
+      tags:
+        - organization
+      description: Получить детальную информацию об организации
+      operationId: organizationShow
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Organization'
+  /api/buildings:
+    get:
+      tags:
+        - building
+      description: Получить список зданий
+      operationId: buildingIndex
+      parameters:
+        - name: filter[geo][lat]
+          in: query
+          description: Широта для геопоиска по зданиям
+          required: false
+          schema:
+            type: number
+        - name: filter[geo][lon]
+          in: query
+          description: Долгота для геопоиска по зданиям
+          required: false
+          schema:
+            type: number
+        - name: filter[geo][radius]
+          in: query
+          description: Радиус в км геопоиска по зданиям
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Building'
+                  meta:
+                    $ref: '#/components/schemas/PaginationMeta'
+components:
+  securitySchemes:
+    ApiTokenAuth:
+      type: apiKey
+      in: header
+      name: X-API-TOKEN
+  schemas:
+    Organization:
+      type: object
+      required:
+        - id
+        - name
+        - building
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        building:
+          $ref: '#/components/schemas/Building'
+    Building:
+      type: object
+      required:
+        - id
+        - address
+        - lat
+        - lon
+      properties:
+        id:
+          type: integer
+        address:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+    PaginationMeta:
+      type: object
+      required:
+        - per_page
+        - current_page
+        - total
+      properties:
+        per_page:
+          type: integer
+        current_page:
+          type: integer
+        total:
+          type: integer

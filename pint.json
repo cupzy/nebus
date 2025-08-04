@@ -1,0 +1,16 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "new_with_braces": {
+            "anonymous_class": false
+        },
+        "single_line_empty_body": false,
+        "php_unit_method_casing": {
+            "case": "camel_case"
+        },
+        "phpdoc_align": {
+            "align": "left"
+        },
+        "not_operator_with_successor_space": false
+    }
+}

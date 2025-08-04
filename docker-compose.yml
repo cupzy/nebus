@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - "80:8080"
+    volumes:
+      - ./:/app
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: main
+  swagger-ui:
+      image: swaggerapi/swagger-ui
+      ports:
+          - "81:8080"
+      volumes:
+          - ./docs/openapi.yaml:/api.yaml
+      environment:
+          SWAGGER_JSON: /api.yaml
+
+volumes:
+  postgres:
